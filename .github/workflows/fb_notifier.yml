@@ -1,0 +1,31 @@
+name: Facebook Group Keyword Notifier
+
+on:
+  schedule:
+    - cron: "0 * * * *"  # 每小時執行一次
+  workflow_dispatch:     # 允許手動執行
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 下載程式碼
+        uses: actions/checkout@v3
+
+      - name: 設定 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 安裝依賴
+        run: |
+          pip install requests beautifulsoup4
+
+      - name: 執行程式
+        env:
+          FACEBOOK_COOKIE: ${{ secrets.FACEBOOK_COOKIE }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GROUP_URL: ${{ secrets.GROUP_URL }}
+        run: python fb_notifier.py
